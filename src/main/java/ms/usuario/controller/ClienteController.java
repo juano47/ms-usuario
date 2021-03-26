@@ -33,6 +33,28 @@ public class ClienteController {
         return ResponseEntity.of(c);
     }
 
+    @GetMapping(path = "/{cuit}")
+    @ApiOperation(value = "Busca un cliente por cuit")
+    public ResponseEntity<Cliente> clientePorCuit(@PathVariable Integer cuit){
+
+        Optional<Cliente> c =  listaClientes
+                .stream()
+                .filter(unCli -> unCli.getCuit().equals(cuit))
+                .findFirst();
+        return ResponseEntity.of(c);
+    }
+
+    //@GetMapping
+    @ApiOperation(value = "Busca un cliente por razón social")
+    public ResponseEntity<Cliente> clientePorRazonSocial(@RequestParam String razonSocial){
+
+        Optional<Cliente> c =  listaClientes
+                .stream()
+                .filter(unCli -> unCli.getRazonSocial().equals(razonSocial))
+                .findFirst();
+        return ResponseEntity.of(c);
+    }
+
     @GetMapping
     public ResponseEntity<List<Cliente>> todos(){
         return ResponseEntity.ok(listaClientes);
