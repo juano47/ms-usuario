@@ -7,6 +7,9 @@ import lombok.Setter;
 @Setter
 public class Empleado {
     private Integer id;
+    private Long dni;
+    private String nombre;
+    private String apellido;
     private String mail;
     private Usuario user;
 }

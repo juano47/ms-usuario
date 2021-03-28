@@ -34,12 +34,15 @@ public class EmpleadoController {
         return ResponseEntity.of(c);
     }
 
-    @GetMapping
-    @ApiOperation(value = "Busca un empleado por  Cliente y/o tipo de obra")
-    public ResponseEntity<List<Empleado>> getEmpleados(@RequestParam(required = false) Integer idCliente,
-                                                       @RequestParam(required = false) Integer idTipoObra){
-        //para mi está mal modelado el domain
-        return null;
+    @GetMapping(params = "nombre")
+    @ApiOperation(value = "Busca un empleado por nombre (parámetro del query string OPCIONAL)")
+    public ResponseEntity<Empleado> empleadoPorNombre(@RequestParam Optional<String> nombre){
+        
+    	Optional<Empleado> c =  listaEmpleados
+                .stream()
+                .filter(unCli -> unCli.getNombre().equals(nombre.get()))
+                .findFirst();
+        return ResponseEntity.of(c);
     }
 
     @PostMapping
