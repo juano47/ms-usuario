@@ -56,11 +56,13 @@ public class ClienteController {
     }
 
     @GetMapping
+    @ApiOperation(value = "Retorna lista de clientes")
     public ResponseEntity<List<Cliente>> todos(){
         return ResponseEntity.ok(listaClientes);
     }
 
     @PostMapping
+    @ApiOperation(value = "Da de alta un nuevo cliente")
     public ResponseEntity<Cliente> crear(@RequestBody Cliente nuevo){
         System.out.println(" crear cliente "+nuevo);
         nuevo.setId(ID_GEN++);
@@ -90,6 +92,13 @@ public class ClienteController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @ApiOperation(value = "Elimina un cliente")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Eliminado correctamente"),
+            @ApiResponse(code = 401, message = "No autorizado"),
+            @ApiResponse(code = 403, message = "Prohibido"),
+            @ApiResponse(code = 404, message = "El ID no existe")
+    })
     public ResponseEntity<Cliente> borrar(@PathVariable Integer id){
         OptionalInt indexOpt =   IntStream.range(0, listaClientes.size())
                 .filter(i -> listaClientes.get(i).getId().equals(id))

@@ -36,7 +36,7 @@ public class ObraController {
     }
 
     @GetMapping(params = { "idCliente", "tipoObra" })
-    @ApiOperation(value = "Busca obras por Cliente y/o tipo de obra")
+    @ApiOperation(value = "Busca obras por cliente y/o tipo de obra")
     public ResponseEntity<List<Obra>> getObras(@RequestParam(required = false) Integer idCliente,
     										   @RequestParam(required = false) String tipoObra){
     	List<Obra> c;
@@ -60,6 +60,7 @@ public class ObraController {
     }
 
     @PostMapping
+    @ApiOperation(value = "Da de alta una nueva obra")
     public ResponseEntity<Obra> crear(@RequestBody Obra nuevo){
         System.out.println(" crear obra "+nuevo);
         nuevo.setId(ID_GEN++);
@@ -68,6 +69,13 @@ public class ObraController {
     }
 
     @PutMapping(path = "/{id}")
+    @ApiOperation(value = "Actualiza una obra")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Actualizada correctamente"),
+            @ApiResponse(code = 401, message = "No autorizado"),
+            @ApiResponse(code = 403, message = "Prohibido"),
+            @ApiResponse(code = 404, message = "El ID no existe")
+    })
     public ResponseEntity<Obra> actualizar(@RequestBody Obra nuevo,  @PathVariable Integer id){
         OptionalInt indexOpt =   IntStream.range(0, listaObras.size())
                 .filter(i -> listaObras.get(i).getId().equals(id))
@@ -82,6 +90,13 @@ public class ObraController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @ApiOperation(value = "Elimina una obra")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Eliminada correctamente"),
+            @ApiResponse(code = 401, message = "No autorizado"),
+            @ApiResponse(code = 403, message = "Prohibido"),
+            @ApiResponse(code = 404, message = "El ID no existe")
+    })
     public ResponseEntity<Obra> borrar(@PathVariable Integer id){
         OptionalInt indexOpt =   IntStream.range(0, listaObras.size())
                 .filter(i -> listaObras.get(i).getId().equals(id))

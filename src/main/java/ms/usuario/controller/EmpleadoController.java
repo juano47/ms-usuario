@@ -35,7 +35,7 @@ public class EmpleadoController {
     }
 
     @GetMapping(params = "nombre")
-    @ApiOperation(value = "Busca un empleado por nombre (parámetro del query string OPCIONAL)")
+    @ApiOperation(value = "Busca un empleado por nombre")
     public ResponseEntity<Empleado> empleadoPorNombre(@RequestParam Optional<String> nombre){
         
     	Optional<Empleado> c =  listaEmpleados
@@ -46,6 +46,7 @@ public class EmpleadoController {
     }
 
     @PostMapping
+    @ApiOperation(value = "Da de alta un nuevo empleado")
     public ResponseEntity<Empleado> crear(@RequestBody Empleado nuevo){
         System.out.println(" crear empleado "+nuevo);
         nuevo.setId(ID_GEN++);
@@ -54,6 +55,13 @@ public class EmpleadoController {
     }
 
     @PutMapping(path = "/{id}")
+    @ApiOperation(value = "Actualiza un empleado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Actualizado correctamente"),
+            @ApiResponse(code = 401, message = "No autorizado"),
+            @ApiResponse(code = 403, message = "Prohibido"),
+            @ApiResponse(code = 404, message = "El ID no existe")
+    })
     public ResponseEntity<Empleado> actualizar(@RequestBody Empleado nuevo,  @PathVariable Integer id){
         OptionalInt indexOpt =   IntStream.range(0, listaEmpleados.size())
                 .filter(i -> listaEmpleados.get(i).getId().equals(id))
@@ -68,6 +76,13 @@ public class EmpleadoController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @ApiOperation(value = "Elimina un empleado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Eliminado correctamente"),
+            @ApiResponse(code = 401, message = "No autorizado"),
+            @ApiResponse(code = 403, message = "Prohibido"),
+            @ApiResponse(code = 404, message = "El ID no existe")
+    })
     public ResponseEntity<Empleado> borrar(@PathVariable Integer id){
         OptionalInt indexOpt =   IntStream.range(0, listaEmpleados.size())
                 .filter(i -> listaEmpleados.get(i).getId().equals(id))
