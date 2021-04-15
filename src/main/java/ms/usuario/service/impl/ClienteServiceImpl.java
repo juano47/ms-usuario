@@ -15,6 +15,7 @@ public class ClienteServiceImpl implements ClienteService{
 	
 	@Autowired
 	ClienteRepository clienteRepo;
+	
 	public Cliente guardarCliente(Cliente c) {
 		return this. clienteRepo.save(c);
 	}
@@ -52,7 +53,6 @@ public class ClienteServiceImpl implements ClienteService{
 	}
 	@Override
 	public void delete(Integer id) {
-		// TODO Auto-generated method stub
-		
+		clienteRepo.deleteById(id);
 	}
 }
