@@ -2,23 +2,27 @@ package ms.usuario.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ms.usuario.dao.ClienteRepository;
 import ms.usuario.domain.Cliente;
+import ms.usuario.exceptions.RiesgoException;
 import ms.usuario.service.ClienteService;
+import ms.usuario.service.RiesgoCrediticioService;
 
 @Service
 public class ClienteServiceImpl implements ClienteService{
-	
+
 	@Autowired
 	ClienteRepository clienteRepo;
-	
-	public Cliente guardarCliente(Cliente c) {
-		return this. clienteRepo.save(c);
-	}
+
+	@Autowired
+	RiesgoCrediticioService riesgoService;
+
 	@Override
 	public Optional<Cliente> buscarPorId(Integer id) {
 		return this. clienteRepo.findById(id);
@@ -33,10 +37,13 @@ public class ClienteServiceImpl implements ClienteService{
 	}
 	@Override
 	public List<Cliente> findAll() {
-		return (List<Cliente>) clienteRepo.findAll();
+		return clienteRepo.findAll();
 	}
 	@Override
-	public Cliente save(Cliente cliente) {
+	public Cliente save(Cliente cliente) throws RiesgoException {
+		if(riesgoService.situacionBCRA(cliente.getCuit()) > 2) {
+			throw new RiesgoException("BCRA");
+		}
 		return clienteRepo.save(cliente);
 	}
 	@Override
@@ -49,7 +56,7 @@ public class ClienteServiceImpl implements ClienteService{
 		clienteDb.setRazonSocial(nuevo.getRazonSocial());
 		clienteDb.setUser(nuevo.getUser());
 		clienteRepo.save(clienteDb);
-		
+
 	}
 	@Override
 	public void delete(Integer id) {
