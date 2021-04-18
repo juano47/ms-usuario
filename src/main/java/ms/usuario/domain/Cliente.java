@@ -3,6 +3,7 @@ package ms.usuario.domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -16,5 +17,6 @@ public class Cliente {
     private Boolean habilitadoOnline;
     private Usuario user;
     private List<Obra> obras;
+    private LocalDate fechaBaja;
 
 }

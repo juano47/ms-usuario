@@ -84,7 +84,7 @@ public class ClienteController {
 		try {
 			cliente = clienteService.save(cliente);
 		} catch (RiesgoException e1) {
-			return ResponseEntity. status(HttpStatus.NOT_FOUND). body(e1. getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e1.getMessage());
 		}
 
 		System.out.println(" crear cliente "+cliente);
@@ -125,6 +125,7 @@ public class ClienteController {
 		if(clienteDb.isPresent()){
 			clienteService.delete(id);
 			return ResponseEntity.ok().build();
+
 		} else {
 			return ResponseEntity.notFound().build();
 		}
