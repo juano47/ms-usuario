@@ -3,7 +3,7 @@
 pipeline {
     agent any
     stages {
-        stage( 'clean' ) {
+        stage('clean') {
 			when {
 				branch 'master'
 			}
@@ -12,7 +12,7 @@ pipeline {
 				bat "./mvnw clean"
 			}
 		}
-		stage('clean-develop' ) {
+		stage('clean-develop') {
 			when {
 				branch 'develop'
 			}
@@ -25,16 +25,14 @@ pipeline {
         stage('backend tests') {
             steps {
                 bat "./mvnw verify"
-   
             }
         }
-        stage('Analisis estatico' ) {
+        stage('Analisis estatico') {
 			steps {
 				bat "./mvnw site"
 				bat "./mvnw checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs spotbugs:spotbugs"
 				}
 			}
-		}
         stage('Install - Master') {
             steps {
                 bat "./mvnw clean install site -DskipTests"
@@ -50,9 +48,8 @@ pipeline {
             }
         }
 	}
-        post {
-		
-			always{
+    post {
+			always {
 				archiveArtifacts artifacts: '**/target/site/**' , fingerprint: true
 				publishHTML([ allowMissing: false,
 				              alwaysLinkToLastBuild: true,
@@ -69,9 +66,7 @@ pipeline {
 				recordIssues enabledForFailure: true, tools: [ cpd(pattern: '**/target/cpd.xml' )]
 				recordIssues enabledForFailure: true, tools: [ pmdParser(pattern: '**/target/pmd.xml' )]
 			}
-
-
-    }
+   	 	}
     options {
         buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
     }
