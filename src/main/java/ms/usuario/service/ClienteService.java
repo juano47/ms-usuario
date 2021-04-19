@@ -18,7 +18,7 @@ public interface ClienteService {
 
 	Cliente save(Cliente cliente) throws RiesgoException;
 
-	void update(Cliente clienteDb, Cliente nuevo);
+	void update(Integer id, Cliente nuevo);
 
 	void delete(Integer id);
 

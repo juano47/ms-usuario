@@ -57,7 +57,7 @@ public class ClienteController {
 
 	@PostMapping
 	@ApiOperation(value = "Da de alta un nuevo cliente")
-	public ResponseEntity crear(@RequestBody Cliente cliente) {
+	public ResponseEntity<?> crear(@RequestBody Cliente cliente) {
 
 		if(cliente.getObras() == null || cliente.getObras().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -99,18 +99,18 @@ public class ClienteController {
 			@ApiResponse(code = 403, message = "Prohibido"),
 			@ApiResponse(code = 404, message = "El ID no existe")
 	})
-	public ResponseEntity<Cliente> actualizar(@RequestBody Cliente nuevo,  @PathVariable Integer id){
+	public ResponseEntity<?> actualizar(@RequestBody Cliente nuevo,  @PathVariable Integer id){
 
-
-		Optional<Cliente> clienteDb = clienteService.buscarPorId(id);
-		if(clienteDb.isPresent()){
-			clienteService.update(clienteDb.get(), nuevo);
-			return ResponseEntity.ok(nuevo);
-		} else {
-			return ResponseEntity.notFound().build();
+		try {
+			clienteService.update(id, nuevo);
 		}
-	}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 
+		} 
+		return ResponseEntity.ok(nuevo);
+	}
+	
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Elimina un cliente")
 	@ApiResponses(value = {
@@ -119,15 +119,15 @@ public class ClienteController {
 			@ApiResponse(code = 403, message = "Prohibido"),
 			@ApiResponse(code = 404, message = "El ID no existe")
 	})
-	public ResponseEntity<Cliente> borrar(@PathVariable Integer id){
+	public ResponseEntity<?> borrar(@PathVariable Integer id){
 
-		Optional<Cliente> clienteDb = clienteService.buscarPorId(id);
-		if(clienteDb.isPresent()){
+		try {
 			clienteService.delete(id);
-			return ResponseEntity.ok().build();
-
-		} else {
-			return ResponseEntity.notFound().build();
 		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+		} 
+		return ResponseEntity.ok().build();
 	}
 }

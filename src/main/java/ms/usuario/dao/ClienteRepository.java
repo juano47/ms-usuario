@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import frsf.isi.dan.InMemoryRepository;

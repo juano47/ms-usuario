@@ -1,7 +1,6 @@
 package ms.usuario.service.impl;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,7 +68,7 @@ public class ClienteServiceImpl implements ClienteService{
 	public Cliente save(Cliente nuevo) throws RiesgoException {
 
 		if(nuevo.getId() != null) {
-			Optional<Cliente> cliente = clienteRepo.findById(nuevo.getId());
+			Optional<Cliente> cliente = this.clienteRepo.findById(nuevo.getId());
 
 			if(cliente.isPresent()) 
 				return this.clienteRepo.save(nuevo);
@@ -82,33 +81,47 @@ public class ClienteServiceImpl implements ClienteService{
 		else
 			return this.clienteRepo.save(nuevo);
 	}
-	@Override
-	public void update(Cliente clienteDb, Cliente nuevo) {
-		clienteDb.setCuit(nuevo.getCuit());
-		clienteDb.setHabilitadoOnline(nuevo.getHabilitadoOnline());
-		clienteDb.setMail(nuevo.getMail());
-		clienteDb.setMaxCuentaCorriente(nuevo.getMaxCuentaCorriente());
-		clienteDb.setObras(nuevo.getObras());
-		clienteDb.setRazonSocial(nuevo.getRazonSocial());
-		clienteDb.setUser(nuevo.getUser());
-		clienteDb.setFechaBaja(nuevo.getFechaBaja());
-		this.clienteRepo.save(clienteDb);
 
+	@Override
+	public void update(Integer id, Cliente nuevo) throws RuntimeException {
+		Optional<Cliente> cliente = clienteRepo.findById(id);
+
+		if(cliente.isPresent()) {
+			Cliente clienteDb = cliente.get();
+			clienteDb.setCuit(nuevo.getCuit());
+			clienteDb.setHabilitadoOnline(nuevo.getHabilitadoOnline());
+			clienteDb.setMail(nuevo.getMail());
+			clienteDb.setMaxCuentaCorriente(nuevo.getMaxCuentaCorriente());
+			clienteDb.setObras(nuevo.getObras());
+			clienteDb.setRazonSocial(nuevo.getRazonSocial());
+			clienteDb.setUser(nuevo.getUser());
+			clienteDb.setFechaBaja(nuevo.getFechaBaja());
+			this.clienteRepo.save(clienteDb);
+		}
+		else 
+			throw new RuntimeException("Cliente no encontrado");
 	}
+
 	@Override
 	public void delete(Integer id) {
-		if(pedidoService.buscarPedidos(null,id).isEmpty())
-			clienteRepo.deleteById(id);
-		else {
-			Optional<Cliente> cliente = clienteRepo.findById(id);
 
-			if(cliente.isPresent()) {
+		Optional<Cliente> cliente;
+		cliente = clienteRepo.findById(id);
+
+		if(cliente.isPresent()) {
+
+			if(!pedidoService.hayPedidos(null,id))
+				this.clienteRepo.deleteById(id);
+			else {
 				//Dar de baja en 30 días
 				LocalDate fecha = LocalDate.now();
-				fecha.plusDays(30);
+				fecha = fecha.plusDays(30);
 				cliente.get().setFechaBaja(fecha);
-				clienteRepo.save(cliente.get());
+				this.clienteRepo.save(cliente.get());
 			}
 		}
+		else
+			throw new RuntimeException("Cliente no encontrado");
+
 	}
 }
