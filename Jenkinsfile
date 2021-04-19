@@ -3,7 +3,7 @@
 pipeline {
     agent any
     stages {
-        stage('clean' ) {
+        stage( 'clean' ) {
 			when {
 				branch 'master'
 			}
@@ -12,7 +12,7 @@ pipeline {
 				bat "./mvnw clean"
 			}
 		}
-		stage(' clean-develop' ) {
+		stage('clean-develop' ) {
 			when {
 				branch 'develop'
 			}
@@ -49,6 +49,7 @@ pipeline {
                 step([$class: 'CordellWalkerRecorder'])
             }
         }
+	}
         post {
 		
 			always{
@@ -68,7 +69,7 @@ pipeline {
 				recordIssues enabledForFailure: true, tools: [ cpd(pattern: '**/target/cpd.xml' )]
 				recordIssues enabledForFailure: true, tools: [ pmdParser(pattern: '**/target/pmd.xml' )]
 			}
-		}
+
 
     }
     options {
