@@ -1,10 +1,6 @@
 package ms.usuario.service.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
@@ -13,8 +9,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,7 +68,11 @@ public class ClienteServiceImplTest {
 	TipoObra tipoObra = new TipoObra();
 	tipoObra.setDescripcion("HOGAR");
 	obra.setTipo(tipoObra);
-	obra.setCliente(unCliente);
+	//obra.setCliente(unCliente);
+	ArrayList<Obra> obrasArray = new ArrayList<Obra>();
+	obrasArray.add(obra);
+	List<Obra> obras = obrasArray.stream().collect(Collectors.toList());
+	unCliente.setObras(obras);
 	}
 	
 	@Test
