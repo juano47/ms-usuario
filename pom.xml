@@ -107,7 +107,7 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven- pmd-plugin</artifactId>
+				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.14.0</version>
 			</plugin>
 			<plugin>
@@ -130,6 +130,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.1.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

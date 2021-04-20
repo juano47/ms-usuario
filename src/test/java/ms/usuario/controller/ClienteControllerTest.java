@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import ms.usuario.MsUsuarioApplicationTests;
 import ms.usuario.domain.Cliente;
 import ms.usuario.domain.Obra;
 import ms.usuario.domain.TipoObra;
@@ -30,8 +28,8 @@ import ms.usuario.domain.Usuario;
 public class ClienteControllerTest {
 
 
-    @Autowired
-    private TestRestTemplate testRestTemplate;
+	@Autowired
+	private TestRestTemplate testRestTemplate;
 
 	@LocalServerPort
 	String puerto;
@@ -40,7 +38,7 @@ public class ClienteControllerTest {
 	private final String urlServer = "http://localhost";
 	private final String apiCliente = "api/cliente";
 
-	
+
 	@BeforeEach
 	void setUp() throws Exception {
 		unCliente = new Cliente();
@@ -67,7 +65,7 @@ public class ClienteControllerTest {
 		unCliente.setObras(obras);
 	}
 
-	
+
 	@Test
 	void testCrearClienteFallaUsuarioSinPassword() {
 		String server = urlServer+":"+puerto+"/"+apiCliente;
@@ -77,13 +75,13 @@ public class ClienteControllerTest {
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
 		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		
-		
+
 		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
-		
+
 		System.out.println(respuesta.getBody());
 	}
-	
-	
+
+
 	@Test
 	void testCrearClienteFallaUsuarioSinNombreUsuario() {
 		String server = urlServer+":"+puerto+"/"+apiCliente;
@@ -93,14 +91,14 @@ public class ClienteControllerTest {
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
 		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		
-		
+
 		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
-		
+
 		System.out.println(respuesta.getBody());
 	}
-	
-	
-	
+
+
+
 	@Test
 	void testCrearClienteFallaSinUsuario() {
 		String server = urlServer+":"+puerto+"/"+apiCliente;
@@ -110,13 +108,97 @@ public class ClienteControllerTest {
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
 		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		
-		
+
 		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
-		
+
 		System.out.println(respuesta.getBody());
 	}
-	
-	
+
+	@Test
+	void testCrearClienteFallaObrasNull() {
+		String server = urlServer+":"+puerto+"/"+apiCliente;
+		System.out.println("SERVER "+server);
+
+		unCliente.setObras(null);
+
+		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
+		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		
+
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+
+		System.out.println(respuesta.getBody());
+	}
+
+
+	@Test
+	void testCrearClienteFallaObrasIsEmpty() {
+		String server = urlServer+":"+puerto+"/"+apiCliente;
+		System.out.println("SERVER "+server);
+
+		unCliente.getObras().clear();
+
+		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
+		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		
+
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+
+		System.out.println(respuesta.getBody());
+	}
+
+
+	@Test
+	void testCrearClienteFallaObraTipoIsNull() {
+		String server = urlServer+":"+puerto+"/"+apiCliente;
+		System.out.println("SERVER "+server);
+
+		unCliente.getObras().get(0).setTipo(null);
+
+		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
+		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		
+
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+
+		System.out.println(respuesta.getBody());
+	}
+
+
+	@Test
+	void testCrearClienteFallaCuitIsNull() {
+		String server = urlServer+":"+puerto+"/"+apiCliente;
+		System.out.println("SERVER "+server);
+
+		unCliente.setCuit(null);
+
+		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
+		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		
+
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+
+		System.out.println(respuesta.getBody());
+	}
+
+
+
+	@Test
+	void testCrearClienteConExitoOBCRAexception() {
+		String server = urlServer+":"+puerto+"/"+apiCliente;
+		System.out.println("SERVER "+server);
+		
+		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
+
+			ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente, String.class);
+			
+			assertTrue(respuesta.getStatusCode().equals(HttpStatus.OK) || respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+
+			if(respuesta.getStatusCode().equals(HttpStatus.OK))
+				assertTrue(respuesta.getBody().equals("Cliente Creado"));
+			else
+				assertTrue(respuesta.getBody().equals("BCRA"));
+			
+			System.out.println("Resultado: "+respuesta.getBody());
+
+
+	}
 
 	//	@Test
 	//	void testClientePorId() {

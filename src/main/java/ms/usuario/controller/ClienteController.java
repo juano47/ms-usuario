@@ -57,7 +57,7 @@ public class ClienteController {
 
 	@PostMapping
 	@ApiOperation(value = "Da de alta un nuevo cliente")
-	public ResponseEntity<?> crear(@RequestBody Cliente cliente) {
+	public ResponseEntity<String> crear(@RequestBody Cliente cliente) {
 
 		if(cliente.getObras() == null || cliente.getObras().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -84,11 +84,10 @@ public class ClienteController {
 		try {
 			cliente = clienteService.save(cliente);
 		} catch (RiesgoException e1) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e1.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMessage());
 		}
 
-		System.out.println(" crear cliente "+cliente);
-		return ResponseEntity.ok(cliente);
+		return ResponseEntity.ok("Cliente Creado");
 	}
 
 	@PutMapping(path = "/{id}")

@@ -58,7 +58,7 @@ pipeline {
 				              reportFiles: 'index.html' ,
 				              reportName: ' Site'
 				            	  ])
-				junit testResults: '**/target/surefire-reports/*. xml' , allowEmptyResults: true
+				junit testResults: 'target/surefire-reports/*. xml' , allowEmptyResults: true
 				jacoco ( execPattern: 'target/jacoco.exec' )
 				recordIssues enabledForFailure: true, tools: [ mavenConsole(), java(), javaDoc()]
 				recordIssues enabledForFailure: true, tools: [ checkStyle()]
