@@ -30,7 +30,6 @@ public class ClienteServiceImpl implements ClienteService{
 	@Override
 	public Optional<Cliente> buscarPorId(Integer id) {
 		Optional<Cliente> cliente = this.clienteRepo.findById(id);
-
 		if(cliente.isPresent() && cliente.get().getFechaBaja() == null)
 			return cliente;
 

@@ -6,16 +6,34 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
 @Getter
 @Setter
+@Entity
 public class Cliente {
+	
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id_cliente")
 	private Integer id;
 	private String razonSocial;
 	private String cuit;
 	private String mail;
 	private Double maxCuentaCorriente;
 	private Boolean habilitadoOnline;
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "id_usuario")
 	private Usuario user;
+	@OneToMany
+	@JoinColumn(name = "id")
 	private List<Obra> obras;
 	private LocalDate fechaBaja;
 
