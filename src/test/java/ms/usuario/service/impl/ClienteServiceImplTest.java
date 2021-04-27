@@ -67,7 +67,7 @@ public class ClienteServiceImplTest {
 	obra.setDescripcion("UnaDescripcion");
 	TipoObra tipoObra = new TipoObra();
 	tipoObra.setDescripcion("HOGAR");
-	obra.setTipo(tipoObra);
+	obra.setTipoObra(tipoObra);
 	//obra.setCliente(unCliente);
 	ArrayList<Obra> obrasArray = new ArrayList<Obra>();
 	obrasArray.add(obra);

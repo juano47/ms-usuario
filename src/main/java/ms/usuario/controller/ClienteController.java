@@ -64,7 +64,7 @@ public class ClienteController {
 					.body("El cliente debe tener asignado al menos una obra");
 		}else {
 			for (Obra obra : cliente.getObras()) {
-				if(obra.getTipo() == null) {
+				if(obra.getTipoObra() == null) {
 					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 							.body("Las obras asignadas al cliente deben especificar un tipo de obra");
 				}

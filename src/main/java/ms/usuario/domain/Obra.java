@@ -27,7 +27,7 @@ public class Obra {
     private Integer superficie;
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_tipo_obra")
-    private TipoObra tipo;
+    private TipoObra tipoObra;
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;

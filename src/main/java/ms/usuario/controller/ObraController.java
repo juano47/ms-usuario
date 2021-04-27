@@ -59,11 +59,11 @@ public class ObraController {
     })
     public ResponseEntity<Obra> actualizar(@RequestBody Obra nuevo,  @PathVariable Integer id){
        
-    	Optional<Obra> obraDb = obraService.findById(id);
+    	Optional<Obra> obraDbOpt = obraService.findById(id);
 
-        if(obraDb.isPresent()){
-            obraDb = obraService.update(obraDb.get(), nuevo);
-            return ResponseEntity.ok(obraDb.get());
+        if(obraDbOpt.isPresent()){
+        	Obra obraDb = obraService.update(obraDbOpt.get(), nuevo);
+            return ResponseEntity.ok(obraDb);
         } else {
             return ResponseEntity.notFound().build();
         }

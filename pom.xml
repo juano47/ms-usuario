@@ -61,15 +61,20 @@
 		</dependency>
 		<!--JPA -->
 		<dependency>
-		 <groupId>org.springframework.boot</groupId>
-		 <artifactId>spring-boot-starter-data-jpa</artifactId>
+			 <groupId>org.springframework.boot</groupId>
+			 <artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
-		 <groupId>com.h2database</groupId>
-		 <artifactId>h2</artifactId>
+			 <groupId>com.h2database</groupId>
+			 <artifactId>h2</artifactId>
 		 <scope>runtime</scope>
 		</dependency>
-		
+		<!-- Use MySQL Connector-Java -->
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.24</version>
+		</dependency>
 	</dependencies>
 
 	<build>

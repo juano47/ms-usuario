@@ -57,7 +57,7 @@ public class ClienteControllerTest {
 		obra.setDescripcion("UnaDescripcion");
 		TipoObra tipoObra = new TipoObra();
 		tipoObra.setDescripcion("HOGAR");
-		obra.setTipo(tipoObra);
+		obra.setTipoObra(tipoObra);
 		//obra.setCliente(unCliente);
 		ArrayList<Obra> obrasArray = new ArrayList<Obra>();
 		obrasArray.add(obra);
@@ -151,7 +151,7 @@ public class ClienteControllerTest {
 		String server = urlServer+":"+puerto+"/"+apiCliente;
 		System.out.println("SERVER "+server);
 
-		unCliente.getObras().get(0).setTipo(null);
+		unCliente.getObras().get(0).setTipoObra(null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
 		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		

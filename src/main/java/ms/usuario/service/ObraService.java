@@ -13,7 +13,7 @@ public interface ObraService {
 
 	Obra save(Obra nuevo);
 
-	Optional<Obra> update(Obra obra, Obra nuevo);
+	Obra update(Obra obra, Obra nuevo);
 
 	void delete(Integer id);
 
