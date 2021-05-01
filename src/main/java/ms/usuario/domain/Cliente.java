@@ -32,8 +32,7 @@ public class Cliente {
 	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "id_usuario")
 	private Usuario user;
-	@OneToMany
-	@JoinColumn(name = "id")
+	@OneToMany(mappedBy = "cliente")
 	private List<Obra> obras;
 	private LocalDate fechaBaja;
 
