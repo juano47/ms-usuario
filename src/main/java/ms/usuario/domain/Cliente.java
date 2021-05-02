@@ -15,10 +15,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Getter
 @Setter
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"mail"})})
 public class Cliente {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -29,10 +34,11 @@ public class Cliente {
 	private String mail;
 	private Double maxCuentaCorriente;
 	private Boolean habilitadoOnline;
-	@OneToOne(cascade = CascadeType.PERSIST)
+	@OneToOne(cascade = CascadeType.PERSIST, orphanRemoval = true)
 	@JoinColumn(name = "id_usuario")
 	private Usuario user;
-	@OneToMany(mappedBy = "cliente")
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "cliente", orphanRemoval = true)
+	@JsonManagedReference
 	private List<Obra> obras;
 	private LocalDate fechaBaja;
 

@@ -8,7 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,10 +26,11 @@ public class Obra {
     private Float longitud;
     private String direccion;
     private Integer superficie;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_tipo_obra")
     private TipoObra tipoObra;
     @ManyToOne
     @JoinColumn(name = "id_cliente")
+    @JsonBackReference
     private Cliente cliente;
 }
