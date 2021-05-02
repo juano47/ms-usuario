@@ -12,7 +12,7 @@ public class RiesgoServiceImpl implements RiesgoCrediticioService {
 	@Override
 	public Integer situacionBCRA(String cuit) {
 		//Retorna entero aleatorio entre min y max-1
-		return ThreadLocalRandom.current().nextInt(0, 5);
+		return ThreadLocalRandom.current().nextInt(0, 2);
 	}
 
 }
