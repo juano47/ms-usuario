@@ -10,6 +10,7 @@ import ms.usuario.exceptions.RiesgoException;
 import ms.usuario.service.ClienteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -86,6 +87,9 @@ public class ClienteController {
 		} catch (RiesgoException e1) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMessage());
 		}
+		catch (DataIntegrityViolationException e2) {			
+			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMostSpecificCause().toString());
+		}
 
 		return ResponseEntity.ok("Cliente Creado");
 	}
@@ -123,7 +127,7 @@ public class ClienteController {
 		try {
 			clienteService.delete(id);
 		}
-		catch(RuntimeException e) {
+		catch(Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 
 		} 
