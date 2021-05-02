@@ -46,9 +46,10 @@ public class ClienteControllerTest {
 		unCliente.setMail("unCli@gmail.com");
 
 		Usuario unUsuario = new Usuario();
-		unUsuario.setUser("miUsuario");
+		unUsuario.setUser("unCli@gmail.com");
 		unUsuario.setPassword("MiPassword");
 		TipoUsuario unTipoUsuario = new TipoUsuario();
+		unTipoUsuario.setId(1);
 		unTipoUsuario.setTipo("Cliente");
 		unUsuario.setTipoUsuario(unTipoUsuario);
 		unCliente.setUser(unUsuario);
@@ -56,9 +57,10 @@ public class ClienteControllerTest {
 		Obra obra = new Obra();
 		obra.setDescripcion("UnaDescripcion");
 		TipoObra tipoObra = new TipoObra();
-		tipoObra.setDescripcion("HOGAR");
+		tipoObra.setId(2);
+		tipoObra.setDescripcion("Casa");
 		obra.setTipoObra(tipoObra);
-		//obra.setCliente(unCliente);
+		obra.setCliente(unCliente);
 		ArrayList<Obra> obrasArray = new ArrayList<Obra>();
 		obrasArray.add(obra);
 		List<Obra> obras = obrasArray.stream().collect(Collectors.toList());

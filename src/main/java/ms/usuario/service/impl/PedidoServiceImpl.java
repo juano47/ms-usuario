@@ -10,7 +10,7 @@ public class PedidoServiceImpl implements PedidoService {
 
 	@Override
 	public boolean hayPedidos(String cuit, Integer id) {
-		return true;
+		return false;
 	}
 
 }
