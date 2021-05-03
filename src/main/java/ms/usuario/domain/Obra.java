@@ -30,7 +30,7 @@ public class Obra {
     @JoinColumn(name = "id_tipo_obra")
     private TipoObra tipoObra;
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    @JoinColumn(name = "id_cliente", nullable = false)
     @JsonBackReference
     private Cliente cliente;
 }

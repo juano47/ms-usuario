@@ -34,10 +34,10 @@ public class Cliente {
 	private String mail;
 	private Double maxCuentaCorriente;
 	private Boolean habilitadoOnline;
-	@OneToOne(cascade = CascadeType.PERSIST, orphanRemoval = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "id_usuario")
 	private Usuario user;
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "cliente", orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cliente", orphanRemoval = true)
 	@JsonManagedReference
 	private List<Obra> obras;
 	private LocalDate fechaBaja;

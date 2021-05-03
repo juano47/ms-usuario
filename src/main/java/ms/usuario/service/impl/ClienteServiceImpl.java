@@ -83,19 +83,22 @@ public class ClienteServiceImpl implements ClienteService{
 
 	@Override
 	public void update(Integer id, Cliente nuevo) throws RuntimeException {
+		
 		Optional<Cliente> cliente = clienteRepo.findById(id);
 
 		if(cliente.isPresent()) {
-			Cliente clienteDb = cliente.get();
-			clienteDb.setCuit(nuevo.getCuit());
-			clienteDb.setHabilitadoOnline(nuevo.getHabilitadoOnline());
-			clienteDb.setMail(nuevo.getMail());
-			clienteDb.setMaxCuentaCorriente(nuevo.getMaxCuentaCorriente());
-			clienteDb.setObras(nuevo.getObras());
-			clienteDb.setRazonSocial(nuevo.getRazonSocial());
-			clienteDb.setUser(nuevo.getUser());
-			clienteDb.setFechaBaja(nuevo.getFechaBaja());
-			this.clienteRepo.save(clienteDb);
+			nuevo.setId(id);
+			this.clienteRepo.save(nuevo);
+//			Cliente clienteDb = cliente.get();
+//			clienteDb.setCuit(nuevo.getCuit());
+//			clienteDb.setHabilitadoOnline(nuevo.getHabilitadoOnline());
+//			clienteDb.setMail(nuevo.getMail());
+//			clienteDb.setMaxCuentaCorriente(nuevo.getMaxCuentaCorriente());
+//			clienteDb.setObras(nuevo.getObras());
+//			clienteDb.setRazonSocial(nuevo.getRazonSocial());
+//			clienteDb.setUser(nuevo.getUser());
+//			clienteDb.setFechaBaja(nuevo.getFechaBaja());
+//			this.clienteRepo.save(clienteDb);
 		}
 		else 
 			throw new RuntimeException("Cliente no encontrado");

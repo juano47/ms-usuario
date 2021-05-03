@@ -107,7 +107,10 @@ public class ClienteController {
 		try {
 			clienteService.update(id, nuevo);
 		}
-		catch(RuntimeException e) {
+		catch (DataIntegrityViolationException e2) {			
+			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMostSpecificCause().toString());
+		}
+		catch(Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 
 		} 
