@@ -1,6 +1,5 @@
 package ms.usuario.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,14 +16,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"user"})})
+@Table(name="USR_USUARIO", schema = "MS_USR", uniqueConstraints = {@UniqueConstraint(columnNames={"user"})})
 public class Usuario {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_usuario")
     private Integer id;
     private String user;
     private String password;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "id_tipo_usuario")
     private TipoUsuario tipoUsuario;
     

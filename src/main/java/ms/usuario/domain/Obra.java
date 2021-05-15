@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -17,6 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name="USR_OBRA", schema = "MS_USR")
 public class Obra {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_obra")
@@ -26,7 +29,7 @@ public class Obra {
     private Float longitud;
     private String direccion;
     private Integer superficie;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "id_tipo_obra")
     private TipoObra tipoObra;
     @ManyToOne

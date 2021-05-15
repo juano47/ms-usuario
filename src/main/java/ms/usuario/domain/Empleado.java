@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name="USR_EMPLEADO", schema = "MS_USR", uniqueConstraints = {@UniqueConstraint(columnNames={"mail"})})
 public class Empleado {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_empleado")
