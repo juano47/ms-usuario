@@ -33,9 +33,9 @@ public class ClienteController {
 		return ResponseEntity.of(cliente);
 	}
 
-	@GetMapping(path = "/cuit/{cuit}")
+	@GetMapping(params = "cuit")
 	@ApiOperation(value = "Busca un cliente por cuit")
-	public ResponseEntity<Cliente> clientePorCuit(@PathVariable String cuit){
+	public ResponseEntity<Cliente> clientePorCuit(@RequestParam Optional<String> cuit){
 
 		Optional<Cliente> cliente = clienteService.findByCuit(cuit);
 		return ResponseEntity.of(cliente);
@@ -134,6 +134,6 @@ public class ClienteController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 
 		} 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok("Cliente "+id+" borrado con éxito");
 	}
 }

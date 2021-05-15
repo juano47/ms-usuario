@@ -42,7 +42,7 @@ public class ClienteServiceImpl implements ClienteService{
 	}
 
 	@Override
-	public Optional<Cliente> findByCuit(String cuit) {
+	public Optional<Cliente> findByCuit(Optional<String> cuit) {
 		Optional<Cliente> cliente = this.clienteRepo.findByCuit(cuit);
 
 		if(cliente.isPresent() && cliente.get().getFechaBaja() == null)
@@ -75,15 +75,7 @@ public class ClienteServiceImpl implements ClienteService{
 
 		if(tipoUsuario.isPresent() && tipoUsuario.get().getTipo().equals(nuevo.getUser().getTipoUsuario().getTipo())){
 
-			if(nuevo.getId() != null) {
-				Optional<Cliente> cliente = this.clienteRepo.findById(nuevo.getId());
-
-				if(cliente.isPresent()) 
-					return this.clienteRepo.save(nuevo);
-				else
-					throw new RuntimeException("Cliente no encontrado");
-			}
-			else if(riesgoService.situacionBCRA(nuevo.getCuit()) > 2) {
+			if(riesgoService.situacionBCRA(nuevo.getCuit()) > 2) {
 				throw new RiesgoException("BCRA");
 			}
 			else
@@ -94,7 +86,7 @@ public class ClienteServiceImpl implements ClienteService{
 	}
 
 	@Override
-	public void update(Integer id, Cliente nuevo) throws RuntimeException {
+	public void update(Integer id, Cliente nuevo) {
 
 		Optional<Cliente> cliente = clienteRepo.findById(id);
 

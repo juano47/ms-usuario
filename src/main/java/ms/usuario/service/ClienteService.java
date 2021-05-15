@@ -10,7 +10,7 @@ public interface ClienteService {
 
 	Optional<Cliente> buscarPorId(Integer id);
 
-	Optional<Cliente> findByCuit(String cuit);
+	Optional<Cliente> findByCuit(Optional<String> cuit);
 
 	Optional<Cliente> findByRazonSocial(Optional<String> razonSocial);
 

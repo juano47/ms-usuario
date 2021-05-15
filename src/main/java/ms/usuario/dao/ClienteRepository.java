@@ -10,7 +10,7 @@ import ms.usuario.domain.Cliente;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
 
-	Optional<Cliente> findByCuit(String cuit);
+	Optional<Cliente> findByCuit(Optional<String> cuit);
 
 	Optional<Cliente> findByRazonSocial(Optional<String> razonSocial);
 

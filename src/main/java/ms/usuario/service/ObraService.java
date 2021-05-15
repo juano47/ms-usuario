@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ms.usuario.domain.Obra;
+import ms.usuario.exceptions.RiesgoException;
 
 public interface ObraService {
 
@@ -11,9 +12,9 @@ public interface ObraService {
 
 	List<Obra> findByClienteOrTipoObra(Integer idCliente, String tipoObra);
 
-	Obra save(Obra nuevo);
+	Obra save(Obra nuevo) throws RiesgoException;
 
-	Obra update(Obra obra, Obra nuevo);
+	void update(Integer id, Obra nuevo);
 
 	void delete(Integer id);
 
