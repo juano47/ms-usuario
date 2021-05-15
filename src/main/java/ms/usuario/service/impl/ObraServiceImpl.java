@@ -7,14 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ms.usuario.dao.ObraRepository;
+import ms.usuario.dao.TipoObraRepository;
 import ms.usuario.domain.Obra;
+import ms.usuario.domain.TipoObra;
 import ms.usuario.service.ObraService;
 
 @Service
 public class ObraServiceImpl implements ObraService{
-	
+
 	@Autowired
 	ObraRepository obraRepository;
+
+	@Autowired
+	TipoObraRepository tipoObraRepository;
+
 
 	@Override
 	public Optional<Obra> findById(Integer id) {
@@ -35,12 +41,18 @@ public class ObraServiceImpl implements ObraService{
 
 	@Override
 	public Obra save(Obra nuevo) {
+
+		Optional<TipoObra> tipoObra = this.tipoObraRepository.findById(nuevo.getTipoObra().getId());
+
+		if(!tipoObra.isPresent() || !tipoObra.get().getDescripcion().equals(nuevo.getTipoObra().getDescripcion()))
+			throw new RuntimeException("Tipo de obra no encontrada");
+		
 		return obraRepository.save(nuevo);
 	}
 
 	@Override
 	public Obra update(Obra obraDb, Obra obraUpdate) {
-		
+
 		obraDb.setDescripcion(obraUpdate.getDescripcion());
 		obraDb.setLatitud(obraUpdate.getLatitud());
 		obraDb.setLongitud(obraUpdate.getLongitud());
@@ -48,7 +60,7 @@ public class ObraServiceImpl implements ObraService{
 		obraDb.setSuperficie(obraUpdate.getSuperficie());
 		obraDb.setTipoObra(obraUpdate.getTipoObra());
 		obraDb.setCliente(obraUpdate.getCliente());
-		
+
 		return obraRepository.save(obraDb);
 	}
 
