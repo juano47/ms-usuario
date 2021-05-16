@@ -4,95 +4,132 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import ms.usuario.domain.Cliente;
 import ms.usuario.domain.Empleado;
+import ms.usuario.service.EmpleadoService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/api/empleado")
 @Api(value = "EmpleadoController", description = "Permite gestionar los empleados de la empresa")
 public class EmpleadoController {
 
-    private static final List<Empleado> listaEmpleados = new ArrayList<>();
-    private static Integer ID_GEN = 1;
+	@Autowired
+	EmpleadoService empleadoService;
 
-    @GetMapping(path = "/{id}")
-    @ApiOperation(value = "Busca un empleado por id")
-    public ResponseEntity<Empleado> empleadoPorId(@PathVariable Integer id){
+	@GetMapping(path = "/{id}")
+	@ApiOperation(value = "Busca un empleado por id")
+	public ResponseEntity<Empleado> empleadoPorId(@PathVariable Integer id){
+		Optional<Empleado> empleado = empleadoService.buscarPorId(id);
+		return ResponseEntity.of(empleado);
+	}
 
-        Optional<Empleado> c =  listaEmpleados
-                .stream()
-                .filter(unCli -> unCli.getId().equals(id))
-                .findFirst();
-        return ResponseEntity.of(c);
-    }
 
-    @GetMapping(params = "nombre")
-    @ApiOperation(value = "Busca un empleado por nombre")
-    public ResponseEntity<Empleado> empleadoPorNombre(@RequestParam Optional<String> nombre){
-        
-    	Optional<Empleado> c =  listaEmpleados
-                .stream()
-                .filter(unCli -> unCli.getNombre().equals(nombre.get()))
-                .findFirst();
-        return ResponseEntity.of(c);
-    }
+	@GetMapping(params = "nombre")
+	@ApiOperation(value = "Busca un empleado por nombre")
+	public ResponseEntity<Empleado> empleadoPorNombre(@RequestParam Optional<String> nombre){
 
-    @PostMapping
-    @ApiOperation(value = "Da de alta un nuevo empleado")
-    public ResponseEntity<Empleado> crear(@RequestBody Empleado nuevo){
-        System.out.println(" crear empleado "+nuevo);
-        nuevo.setId(ID_GEN++);
-        listaEmpleados.add(nuevo);
-        return ResponseEntity.ok(nuevo);
-    }
+		Optional<Empleado> empleado = empleadoService.findByNombre(nombre);
+		return ResponseEntity.of(empleado);
+	}
+	
 
-    @PutMapping(path = "/{id}")
-    @ApiOperation(value = "Actualiza un empleado")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Actualizado correctamente"),
-            @ApiResponse(code = 401, message = "No autorizado"),
-            @ApiResponse(code = 403, message = "Prohibido"),
-            @ApiResponse(code = 404, message = "El ID no existe")
-    })
-    public ResponseEntity<Empleado> actualizar(@RequestBody Empleado nuevo,  @PathVariable Integer id){
-        OptionalInt indexOpt =   IntStream.range(0, listaEmpleados.size())
-                .filter(i -> listaEmpleados.get(i).getId().equals(id))
-                .findFirst();
+	@GetMapping
+	@ApiOperation(value = "Retorna lista de empleados")
+	public ResponseEntity<List<Empleado>> todos(){
+		List<Empleado> allEmpleados = empleadoService.findAll();
+		return ResponseEntity.ok(allEmpleados);
+	}
 
-        if(indexOpt.isPresent()){
-            listaEmpleados.set(indexOpt.getAsInt(), nuevo);
-            return ResponseEntity.ok(nuevo);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	@PostMapping
+	@ApiOperation(value = "Da de alta un nuevo empleado")
+	public ResponseEntity<String> crear(@RequestBody Empleado empleado) {
 
-    @DeleteMapping(path = "/{id}")
-    @ApiOperation(value = "Elimina un empleado")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Eliminado correctamente"),
-            @ApiResponse(code = 401, message = "No autorizado"),
-            @ApiResponse(code = 403, message = "Prohibido"),
-            @ApiResponse(code = 404, message = "El ID no existe")
-    })
-    public ResponseEntity<Empleado> borrar(@PathVariable Integer id){
-        OptionalInt indexOpt =   IntStream.range(0, listaEmpleados.size())
-                .filter(i -> listaEmpleados.get(i).getId().equals(id))
-                .findFirst();
+		if(empleado.getMail() == null || empleado.getUser() == null || empleado.getUser().getUser() == null || 
+				empleado.getUser().getPassword() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("El usuario asignado al empleado debe contener mail, nombre de usuario y password");
+		}
+		else if(empleado.getUser().getTipoUsuario() == null || !empleado.getUser().getTipoUsuario().getTipo().equals("Empleado"))
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Tipo de usuario no válido");
+		else if(empleado.getNombre() == null || empleado.getApellido() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Debe especificar nombre y apellido");
+		}
 
-        if(indexOpt.isPresent()){
-            listaEmpleados.remove(indexOpt.getAsInt());
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+		try {
+			empleado = empleadoService.save(empleado);
+		}
+		catch (DataIntegrityViolationException e1) {			
+			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMostSpecificCause().toString());
+		}
+		 catch (Exception e2) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMessage());
+			}
+		return ResponseEntity.ok("Empleado Creado");
+	}
+
+	@PutMapping(path = "/{id}")
+	@ApiOperation(value = "Actualiza un empleado")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Actualizado correctamente"),
+			@ApiResponse(code = 401, message = "No autorizado"),
+			@ApiResponse(code = 403, message = "Prohibido"),
+			@ApiResponse(code = 404, message = "El ID no existe")
+	})
+	public ResponseEntity<?> actualizar(@RequestBody Empleado empleado,  @PathVariable Integer id){
+
+		if(empleado.getMail() == null || empleado.getUser() == null || empleado.getUser().getUser() == null || 
+				empleado.getUser().getPassword() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("El usuario asignado al empleado debe contener mail, nombre de usuario y password");
+		}
+		else if(empleado.getUser().getTipoUsuario() == null || !empleado.getUser().getTipoUsuario().getTipo().equals("Empleado"))
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Tipo de usuario no válido");
+		else if(empleado.getNombre() == null || empleado.getApellido() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Debe especificar nombre y apellido");
+		}
+
+		try {
+			empleadoService.update(id, empleado);
+		}
+		catch (DataIntegrityViolationException e2) {			
+			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMostSpecificCause().toString());
+		}
+		catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+		} 
+		return ResponseEntity.ok(empleado);
+	}
+	
+	@DeleteMapping(path = "/{id}")
+	@ApiOperation(value = "Elimina un empleado")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Eliminado correctamente"),
+			@ApiResponse(code = 401, message = "No autorizado"),
+			@ApiResponse(code = 403, message = "Prohibido"),
+			@ApiResponse(code = 404, message = "El ID no existe")
+	})
+	public ResponseEntity<?> borrar(@PathVariable Integer id){
+
+		try {
+			empleadoService.delete(id);
+		}
+		catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+		} 
+		return ResponseEntity.ok("Empleado "+id+" borrado con éxito");
+	}
 }
