@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import ms.usuario.domain.Cliente;
 import ms.usuario.domain.Obra;
-import ms.usuario.exceptions.RiesgoException;
 import ms.usuario.service.ClienteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +48,14 @@ public class ClienteController {
 		return ResponseEntity.of(cliente);
 	}
 
+	@GetMapping(params = "idObra")
+	@ApiOperation(value = "Busca un cliente por idObra")
+	public ResponseEntity<Cliente> clientePorIdObra(@RequestParam Optional<Integer> idObra){
+
+		Optional<Cliente> cliente = clienteService.findByIdObra(idObra);
+		return ResponseEntity.of(cliente);
+	}
+
 	@GetMapping
 	@ApiOperation(value = "Retorna lista de clientes")
 	public ResponseEntity<List<Cliente>> todos(){
@@ -77,6 +84,8 @@ public class ClienteController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("El usuario asignado al cliente debe contener nombre de usuario y password");
 		}
+		else if(cliente.getUser().getTipoUsuario() == null || !cliente.getUser().getTipoUsuario().getTipo().equals("Cliente"))
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de usuario no válido");
 		else if(cliente.getCuit() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Debe ingresar el cuit de cliente");
@@ -86,11 +95,11 @@ public class ClienteController {
 			cliente = clienteService.save(cliente);
 		}
 		catch (DataIntegrityViolationException e1) {			
-			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMostSpecificCause().toString());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMostSpecificCause().toString());
 		}
-		 catch (Exception e2) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMessage());
-			}
+		catch (Exception e2) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMessage());
+		}
 		return ResponseEntity.ok("Cliente Creado");
 	}
 
@@ -102,21 +111,34 @@ public class ClienteController {
 			@ApiResponse(code = 403, message = "Prohibido"),
 			@ApiResponse(code = 404, message = "El ID no existe")
 	})
-	public ResponseEntity<?> actualizar(@RequestBody Cliente nuevo,  @PathVariable Integer id){
+	public ResponseEntity<?> actualizar(@RequestBody Cliente cliente,  @PathVariable Integer id){
 
+
+		if(cliente.getUser() == null || cliente.getUser().getUser() == null || 
+				cliente.getUser().getPassword() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("El usuario asignado al cliente debe contener nombre de usuario y password");
+		}
+		else if(cliente.getUser().getTipoUsuario() == null || !cliente.getUser().getTipoUsuario().getTipo().equals("Cliente"))
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Tipo de usuario no válido");
+		else if(cliente.getCuit() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Debe ingresar el cuit de cliente");
+		}
 		try {
-			clienteService.update(id, nuevo);
+			clienteService.update(id, cliente);
 		}
-		catch (DataIntegrityViolationException e2) {			
-			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMostSpecificCause().toString());
+		catch (DataIntegrityViolationException e1) {			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMostSpecificCause().toString());
 		}
-		catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		catch(Exception e2) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e2.getMessage());
 
 		} 
-		return ResponseEntity.ok(nuevo);
+		return ResponseEntity.ok(cliente);
 	}
-	
+
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Elimina un cliente")
 	@ApiResponses(value = {

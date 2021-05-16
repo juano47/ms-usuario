@@ -14,4 +14,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
 
 	Optional<Cliente> findByRazonSocial(Optional<String> razonSocial);
 
+	Optional<Cliente> findByObrasId(Optional<Integer> idObra);
+
+	
 }

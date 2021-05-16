@@ -4,9 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import ms.usuario.domain.Cliente;
 import ms.usuario.domain.Obra;
-import ms.usuario.exceptions.RiesgoException;
 import ms.usuario.service.ObraService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +53,7 @@ public class ObraController {
 
 		if(idCliente == null){
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("La obra debe estar asignada a un cliente");
+					.body("Debe especificar id del cliente");
 		}
 		else
 			if(nuevo.getTipoObra() == null) {

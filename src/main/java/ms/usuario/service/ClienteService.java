@@ -22,4 +22,6 @@ public interface ClienteService {
 
 	void delete(Integer id);
 
+	Optional<Cliente> findByIdObra(Optional<Integer> idObra);
+
 }

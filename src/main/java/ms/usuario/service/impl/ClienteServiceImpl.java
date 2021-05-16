@@ -62,6 +62,18 @@ public class ClienteServiceImpl implements ClienteService{
 	}
 
 	@Override
+	public Optional<Cliente> findByIdObra(Optional<Integer> idObra) {
+
+		Optional<Cliente> cliente = this.clienteRepo.findByObrasId(idObra);
+
+		if(cliente.isPresent() && cliente.get().getFechaBaja() == null)
+			return cliente;
+
+		return Optional.empty();
+	}
+
+
+	@Override
 	public List<Cliente> findAll() {
 		return this.clienteRepo.findAll().stream()
 				.filter(unCli -> unCli.getFechaBaja() == null)
@@ -73,7 +85,7 @@ public class ClienteServiceImpl implements ClienteService{
 
 		Optional<TipoUsuario> tipoUsuario = this.tipoUsuarioRepo.findById(nuevo.getUser().getTipoUsuario().getId());
 
-		if(tipoUsuario.isPresent() && tipoUsuario.get().getTipo().equals(nuevo.getUser().getTipoUsuario().getTipo())){
+		if(tipoUsuario.isPresent() && tipoUsuario.get().getTipo().equals("Cliente")){
 
 			if(riesgoService.situacionBCRA(nuevo.getCuit()) > 2) {
 				throw new RiesgoException("BCRA");
@@ -82,7 +94,7 @@ public class ClienteServiceImpl implements ClienteService{
 				return this.clienteRepo.save(nuevo);
 		}
 		else
-			throw new RuntimeException("Tipo de usuario no encontrado");
+			throw new RuntimeException("Tipo de usuario no válido");
 	}
 
 	@Override
@@ -91,8 +103,18 @@ public class ClienteServiceImpl implements ClienteService{
 		Optional<Cliente> cliente = clienteRepo.findById(id);
 
 		if(cliente.isPresent()) {
-			nuevo.setId(id);
-			this.clienteRepo.save(nuevo);
+			if(nuevo.getUser().getId() == null || cliente.get().getUser().getId() != nuevo.getUser().getId())
+				throw new RuntimeException("ID Usuario no válido");
+			else {
+				Optional<TipoUsuario> tipoUsuario = this.tipoUsuarioRepo.findById(nuevo.getUser().getTipoUsuario().getId());
+
+				if(tipoUsuario.isPresent() && tipoUsuario.get().getTipo().equals("Cliente")){
+					nuevo.setId(id);
+					this.clienteRepo.save(nuevo);
+				}
+				else
+					throw new RuntimeException("Tipo de usuario no válido");
+			}
 		}
 		else 
 			throw new RuntimeException("Cliente no encontrado");
@@ -120,4 +142,6 @@ public class ClienteServiceImpl implements ClienteService{
 			throw new RuntimeException("Cliente no encontrado");
 
 	}
+
+
 }
