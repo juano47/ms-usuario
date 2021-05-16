@@ -12,10 +12,12 @@ public interface ObraService {
 
 	List<Obra> findByClienteOrTipoObra(Integer idCliente, String tipoObra);
 
-	Obra save(Obra nuevo) throws RiesgoException;
+	Obra save(Obra nuevo, Integer idCliente) throws RiesgoException;
 
 	void update(Integer id, Obra nuevo);
 
 	void delete(Integer id);
+
+	List<Obra> findAll();
 
 }

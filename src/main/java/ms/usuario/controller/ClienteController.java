@@ -84,13 +84,13 @@ public class ClienteController {
 
 		try {
 			cliente = clienteService.save(cliente);
-		} catch (RiesgoException e1) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMessage());
 		}
-		catch (DataIntegrityViolationException e2) {			
-			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMostSpecificCause().toString());
+		catch (DataIntegrityViolationException e1) {			
+			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMostSpecificCause().toString());
 		}
-
+		 catch (Exception e2) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMessage());
+			}
 		return ResponseEntity.ok("Cliente Creado");
 	}
 

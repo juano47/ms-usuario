@@ -1,6 +1,6 @@
 package ms.usuario.service.impl;
 
-import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class ObraServiceImpl implements ObraService{
 
 	@Override
 	public List<Obra> findByClienteOrTipoObra(Integer idCliente, String tipoObra) {
-		if(idCliente != null && tipoObra != null) {
+		if(idCliente != null && tipoObra != null && tipoObra.length()>1) {
 			return obraRepository.findByClienteIdAndTipoObraDescripcion(idCliente, tipoObra);
 		}else if(idCliente != null) {
 			return obraRepository.findByClienteId(idCliente);
@@ -50,9 +50,9 @@ public class ObraServiceImpl implements ObraService{
 	}
 
 	@Override
-	public Obra save(Obra nuevo) throws RiesgoException {
+	public Obra save(Obra nuevo, Integer idCliente) throws RiesgoException {
 
-		Optional<Cliente> cliente = this.clienteRepository.findById(nuevo.getCliente().getId());
+		Optional<Cliente> cliente = this.clienteRepository.findById(idCliente);
 
 		if(!cliente.isPresent())
 			throw new RuntimeException("Cliente no encontrado");
@@ -62,11 +62,13 @@ public class ObraServiceImpl implements ObraService{
 			if(!tipoObra.isPresent() || !tipoObra.get().getDescripcion().equals(nuevo.getTipoObra().getDescripcion()))
 				throw new RuntimeException("Tipo de obra no encontrada");
 			else {	
-				if(riesgoService.situacionBCRA(nuevo.getCliente().getCuit()) > 2) {
+				if(riesgoService.situacionBCRA(cliente.get().getCuit()) > 2) {
 					throw new RiesgoException("BCRA");
 				}
-				else
+				else {
+					nuevo.setCliente(cliente.get());
 					return this.obraRepository.save(nuevo);
+				}
 			}
 		}
 
@@ -78,12 +80,9 @@ public class ObraServiceImpl implements ObraService{
 		Optional<Obra> obra = this.obraRepository.findById(id);
 
 		if(obra.isPresent()) {
-			if(obra.get().getCliente().getId().equals(nuevo.getCliente().getId())) {
-				nuevo.setId(id);
-				this.obraRepository.save(nuevo);
-			}
-			else
-				throw new RuntimeException("La obra "+id+" existente no pertenece al cliente "+nuevo.getCliente().getId());
+			nuevo.setId(id);
+			nuevo.setCliente(obra.get().getCliente());
+			this.obraRepository.save(nuevo);
 		}
 		else 
 			throw new RuntimeException("Obra no encontrada");
@@ -100,5 +99,10 @@ public class ObraServiceImpl implements ObraService{
 		else
 			throw new RuntimeException("Obra no encontrada");
 
+	}
+
+	@Override
+	public List<Obra> findAll() {
+		return this.obraRepository.findAll();
 	}
 }

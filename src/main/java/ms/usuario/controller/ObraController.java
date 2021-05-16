@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import ms.usuario.domain.Cliente;
 import ms.usuario.domain.Obra;
 import ms.usuario.exceptions.RiesgoException;
 import ms.usuario.service.ObraService;
@@ -41,11 +42,18 @@ public class ObraController {
 		return ResponseEntity.ok(obras);
 	}
 
-	@PostMapping
-	@ApiOperation(value = "Da de alta una nueva obra")
-	public ResponseEntity<?> crear(@RequestBody Obra nuevo){
+	@GetMapping
+	@ApiOperation(value = "Retorna lista de obras")
+	public ResponseEntity<List<Obra>> todas(){
+		List<Obra> allObras = obraService.findAll();
+		return ResponseEntity.ok(allObras);
+	}
 
-		if(nuevo.getCliente() == null){
+	@PostMapping(path = "/{idCliente}")
+	@ApiOperation(value = "Da de alta una nueva obra")
+	public ResponseEntity<?> crear(@RequestBody Obra nuevo, @PathVariable Integer idCliente){
+
+		if(idCliente == null){
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("La obra debe estar asignada a un cliente");
 		}
@@ -55,12 +63,12 @@ public class ObraController {
 						.body("La obra debe especificar un tipo de obra");
 			}
 		try {
-			obraService.save(nuevo);
-		} catch (RiesgoException e1) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMessage());
+			obraService.save(nuevo, idCliente);
 		}
-		catch (DataIntegrityViolationException e2) {			
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMostSpecificCause().toString());
+		catch (DataIntegrityViolationException e1) {			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMostSpecificCause().toString());
+		}catch (Exception e2) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMessage());
 		}
 
 		return ResponseEntity.ok("Obra creada");
@@ -77,15 +85,10 @@ public class ObraController {
 	})
 	public ResponseEntity<?> actualizar(@RequestBody Obra nuevo,  @PathVariable Integer id){
 
-		if(nuevo.getCliente() == null){
+		if(nuevo.getTipoObra() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("La obra debe estar asignada a un cliente");
+					.body("La obra debe especificar un tipo de obra");
 		}
-		else
-			if(nuevo.getTipoObra() == null) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body("La obra debe especificar un tipo de obra");
-			}
 		try {
 			obraService.update(id, nuevo);
 		}

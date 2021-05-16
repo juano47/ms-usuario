@@ -1,7 +1,9 @@
 package ms.usuario.domain;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,8 +29,8 @@ public class Obra {
     private Float longitud;
     private String direccion;
     private Integer superficie;
-    @ManyToOne
-    @JoinColumn(name = "id_tipo_obra")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_tipo_obra", nullable = false)
     private TipoObra tipoObra;
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
