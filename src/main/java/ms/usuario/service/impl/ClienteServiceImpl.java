@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ms.usuario.dao.ClienteRepository;
+import ms.usuario.dao.ObraRepository;
 import ms.usuario.dao.TipoUsuarioRepository;
 import ms.usuario.domain.Cliente;
 import ms.usuario.domain.TipoUsuario;
@@ -25,6 +26,9 @@ public class ClienteServiceImpl implements ClienteService{
 
 	@Autowired
 	TipoUsuarioRepository tipoUsuarioRepo;
+	
+	@Autowired
+	ObraRepository obraRepo;
 
 	@Autowired
 	RiesgoCrediticioService riesgoService;
@@ -127,8 +131,11 @@ public class ClienteServiceImpl implements ClienteService{
 		cliente = clienteRepo.findById(id);
 
 		if(cliente.isPresent()) {
-
-			if(!pedidoService.hayPedidos(null,id))
+			List<Integer> idObrasCliente = obraRepo.findByClienteId(id)
+					.stream().map(m -> m.getId())
+					.collect(Collectors.toList());
+			
+			if(!pedidoService.existenPedidosPendientesCliente(idObrasCliente))
 				this.clienteRepo.deleteById(id);
 			else {
 				//Dar de baja en 30 días
