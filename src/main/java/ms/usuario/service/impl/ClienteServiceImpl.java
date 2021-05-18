@@ -130,7 +130,7 @@ public class ClienteServiceImpl implements ClienteService{
 		Optional<Cliente> cliente;
 		cliente = clienteRepo.findById(id);
 
-		if(cliente.isPresent()) {
+		if(cliente.isPresent() && cliente.get().getFechaBaja()==null) {
 			List<Integer> idObrasCliente = obraRepo.findByClienteId(id)
 					.stream().map(m -> m.getId())
 					.collect(Collectors.toList());
