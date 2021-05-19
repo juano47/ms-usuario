@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="USR_EMPLEADO", schema = "MS_USR", uniqueConstraints = {@UniqueConstraint(columnNames={"mail"})})
+@Table(name="USR_EMPLEADO", uniqueConstraints = {@UniqueConstraint(columnNames={"mail"})})
 public class Empleado {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_empleado")

@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="USR_OBRA", schema = "MS_USR")
+@Table(name="USR_OBRA")
 public class Obra {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_obra")

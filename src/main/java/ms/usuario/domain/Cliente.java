@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Getter
 @Setter
 @Entity
-@Table(name="USR_CLIENTE", schema = "MS_USR", uniqueConstraints = {@UniqueConstraint(columnNames={"mail"})})
+@Table(name="USR_CLIENTE", uniqueConstraints = {@UniqueConstraint(columnNames={"mail"})})
 public class Cliente {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)

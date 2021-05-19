@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="USR_USUARIO", schema = "MS_USR", uniqueConstraints = {@UniqueConstraint(columnNames={"user"})})
+@Table(name="USR_USUARIO", uniqueConstraints = {@UniqueConstraint(columnNames={"user"})})
 public class Usuario {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_usuario")

@@ -4,6 +4,7 @@ package ms.usuario.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -20,22 +21,22 @@ public class PedidoServiceImpl implements PedidoService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	String puerto = "8081";
-	String urlServer = "http://localhost";
-	String apiPedido = "api/pedido";
-	String server = urlServer+":"+puerto+"/"+apiPedido;
+	@Value("${endpoint.msPedido}")
+	private String PEDIDO_ENDPOINT;
 
 
 	@Override
 	public boolean existenPedidosPendientesCliente(List<Integer> idObras) {
 
-		//		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(server)
-		//		        // Add query parameter
-		//		        .queryParam("firstName", "Mark")
-		//		        .queryParam("lastName", "Watney");
-
-		ResponseEntity<Boolean> respuesta = restTemplate.exchange(server+"/obra", HttpMethod.PUT,new HttpEntity<List<Integer>>(idObras) , Boolean.class);
+		String url = PEDIDO_ENDPOINT+"/obra"; 
+		
+		try {
+		ResponseEntity<Boolean> respuesta = restTemplate.exchange(url, HttpMethod.PUT,new HttpEntity<List<Integer>>(idObras) , Boolean.class);
 		return respuesta.getBody();
+		}catch(Exception e1) {
+			throw new RuntimeException("MS-Pedidos no responde. El cliente no pudo ser eliminado. Vuelva a intentarlo");
+		}
+		
 	}
 
 	@Override
@@ -44,4 +45,9 @@ public class PedidoServiceImpl implements PedidoService {
 		return true;
 	}
 
+	//		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(server)
+	//		        // Add query parameter
+	//		        .queryParam("firstName", "Mark")
+	//		        .queryParam("lastName", "Watney");
+	
 }
