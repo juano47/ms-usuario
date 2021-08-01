@@ -158,4 +158,9 @@ public class ClienteController {
 		} 
 		return ResponseEntity.ok("Cliente "+id+" borrado con éxito");
 	}
+
+	@GetMapping("prueba")
+	String prueba(){
+		return "FUNCIONA TODO";
+	}
 }
