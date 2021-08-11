@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/obra")
 @Api(value = "ObraController", description = "Permite gestionar los obras de la empresa")
@@ -47,9 +47,11 @@ public class ObraController {
 		return ResponseEntity.ok(allObras);
 	}
 
-	@PostMapping(path = "/{idCliente}")
+	@PostMapping
 	@ApiOperation(value = "Da de alta una nueva obra")
-	public ResponseEntity<?> crear(@RequestBody Obra nuevo, @PathVariable Integer idCliente){
+	public ResponseEntity<?> crear(@RequestBody Obra nuevo){
+		
+		Integer idCliente = nuevo.getCliente() != null? nuevo.getCliente().getId() : null ;
 
 		if(idCliente == null){
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)

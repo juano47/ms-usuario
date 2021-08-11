@@ -59,7 +59,7 @@ public class ObraServiceImpl implements ObraService{
 		else {
 			Optional<TipoObra> tipoObra = this.tipoObraRepository.findById(nuevo.getTipoObra().getId());
 
-			if(!tipoObra.isPresent() || !tipoObra.get().getDescripcion().equals(nuevo.getTipoObra().getDescripcion()))
+			if(!tipoObra.isPresent() || !tipoObra.get().getId().equals(nuevo.getTipoObra().getId()))
 				throw new RuntimeException("Tipo de obra no encontrada");
 			else {	
 				if(riesgoService.situacionBCRA(cliente.get().getCuit()) > 2) {

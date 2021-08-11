@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin("*")
 @RestController
-@RequestMapping("/api/empleado")
+@RequestMapping("/api/empleados")
 @Api(value = "EmpleadoController", description = "Permite gestionar los empleados de la empresa")
 public class EmpleadoController {
 
