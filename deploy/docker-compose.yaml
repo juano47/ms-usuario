@@ -1,12 +1,14 @@
-version: "2.2"
+version: "3.9"
 services:
-  usuarios:
-    container_name: dan-corralon_app
-    image: ms-usuarios:0.0.1-SNAPSHOT
+  usuarioService:
+    container_name: ms-usuario
+    image: ms-usuario:0.0.1-SNAPSHOT
     ports:
-     - 8084:8084
+      - "8084:8084"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
     networks:
-      app:
+      - network_tp
 networks:
- app:
-  external: true
+  network_tp:
+    driver: bridge
