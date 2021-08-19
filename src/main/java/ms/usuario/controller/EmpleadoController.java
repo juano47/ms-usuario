@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/api/empleados")
 @Api(value = "EmpleadoController", description = "Permite gestionar los empleados de la empresa")
@@ -53,7 +53,7 @@ public class EmpleadoController {
 	@ApiOperation(value = "Da de alta un nuevo empleado")
 	public ResponseEntity<String> crear(@RequestBody Empleado empleado) {
 
-		if(empleado.getMail() == null || empleado.getUser() == null || empleado.getUser().getUser() == null || 
+		if(empleado.getMail() == null || empleado.getUser() == null || empleado.getUser().getUsername() == null || 
 				empleado.getUser().getPassword() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("El usuario asignado al empleado debe contener mail, nombre de usuario y password");
@@ -88,7 +88,7 @@ public class EmpleadoController {
 	})
 	public ResponseEntity<?> actualizar(@RequestBody Empleado empleado,  @PathVariable Integer id){
 
-		if(empleado.getMail() == null || empleado.getUser() == null || empleado.getUser().getUser() == null || 
+		if(empleado.getMail() == null || empleado.getUser() == null || empleado.getUser().getUsername() == null || 
 				empleado.getUser().getPassword() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("El usuario asignado al empleado debe contener mail, nombre de usuario y password");

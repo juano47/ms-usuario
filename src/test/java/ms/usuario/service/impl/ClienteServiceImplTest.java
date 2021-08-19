@@ -56,7 +56,7 @@ public class ClienteServiceImplTest {
 	unCliente.setMail("unCli@gmail.com");
 	
 	Usuario unUsuario = new Usuario();
-	unUsuario.setUser("miUsuario");
+	unUsuario.setUsername("miUsuario");
 	unUsuario.setPassword("MiPassword");
 	TipoUsuario unTipoUsuario = new TipoUsuario();
 	unTipoUsuario.setTipo("Cliente");
