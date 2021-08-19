@@ -2,6 +2,7 @@ package ms.usuario.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import ms.usuario.dao.TipoUsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -46,6 +48,9 @@ public class ClienteServiceImplTest {
 	
 	@MockBean
 	ClienteRepository clienteRepo;
+
+	@MockBean
+	TipoUsuarioRepository tipoUsuarioRepo;
 	
 	Cliente unCliente;
 	
@@ -56,6 +61,7 @@ public class ClienteServiceImplTest {
 	unCliente.setMail("unCli@gmail.com");
 	
 	Usuario unUsuario = new Usuario();
+	unUsuario.setId(1);
 	unUsuario.setUsername("miUsuario");
 	unUsuario.setPassword("MiPassword");
 	TipoUsuario unTipoUsuario = new TipoUsuario();
@@ -77,10 +83,16 @@ public class ClienteServiceImplTest {
 	
 	@Test
 	void testCrearClienteConExito() {
+
+		Optional<TipoUsuario> tipoUsuario= Optional.of(unCliente.getUser().getTipoUsuario());
+		tipoUsuario.get().setId(1);
+
 		//Situacion crediticia OK
 		when(riesgoServ.situacionBCRA(any(String.class))).thenReturn(2);
 		//Retornar cliente
 		when(clienteRepo.save(any(Cliente.class))).thenReturn(unCliente);
+		//TipoUsuario
+		when(tipoUsuarioRepo.findById(any(Integer.class))).thenReturn(tipoUsuario);
 		
 		Cliente clienteResultado = null;
 		RiesgoException excep = null;
@@ -98,9 +110,15 @@ public class ClienteServiceImplTest {
 	
 	@Test
 	void testCrearClienteConRiesgoException() {
+		Optional<TipoUsuario> tipoUsuario= Optional.of(unCliente.getUser().getTipoUsuario());
+		tipoUsuario.get().setId(1);
+
 		//Situacion crediticia es 3
 		when(riesgoServ.situacionBCRA(any(String.class))).thenReturn(3);
-		
+
+		//TipoUsuario
+		when(tipoUsuarioRepo.findById(any(Integer.class))).thenReturn(tipoUsuario);
+
 		//Retornar cliente
 		when(clienteRepo.save(any(Cliente.class))).thenReturn(unCliente);
 		
@@ -125,7 +143,7 @@ public class ClienteServiceImplTest {
 		when(clienteRepo.findById(any(Integer.class))).thenReturn(opt);
 		
 		//No existen pedidos realizados por el cliente
-				when(pedidoServ.hayPedidos(ArgumentMatchers.isNull(),any(Integer.class))).thenReturn(false);
+		when(pedidoServ.existenPedidosPendientesCliente(anyList())).thenReturn(false);
 		
 		doNothing().when(clienteRepo).deleteById(any(Integer.class));
 		//Retornar cliente
@@ -141,7 +159,7 @@ public class ClienteServiceImplTest {
 		}
 		assertNull(excep);
 		assertNull(unCliente.getFechaBaja());
-		verify(pedidoServ,times(1)).hayPedidos(ArgumentMatchers.isNull(),any(Integer.class));
+		verify(pedidoServ,times(1)).existenPedidosPendientesCliente(anyList());
 		verify(clienteRepo,never()).save(any(Cliente.class));
 		verify(clienteRepo,times(1)).deleteById(1);
 	}
@@ -155,7 +173,7 @@ public class ClienteServiceImplTest {
 		when(clienteRepo.findById(any(Integer.class))).thenReturn(opt);
 		
 		//Existen pedidos realizados por el cliente
-		when(pedidoServ.hayPedidos(ArgumentMatchers.isNull(),any(Integer.class))).thenReturn(true);
+		when(pedidoServ.existenPedidosPendientesCliente(anyList())).thenReturn(true);
 	
 		doNothing().when(clienteRepo).deleteById(any(Integer.class));
 		//Retornar cliente
@@ -225,8 +243,11 @@ public class ClienteServiceImplTest {
 	
 	@Test
 	void testUpdateClienteExito() {
-		
-		Cliente clienteDb = new Cliente();
+
+		Cliente clienteDb = unCliente;
+
+		Optional<TipoUsuario> tipoUsuario= Optional.of(unCliente.getUser().getTipoUsuario());
+		tipoUsuario.get().setId(1);
 		
 		Optional<Cliente> opt = Optional.of(clienteDb);
 		//Cliente encontrado
@@ -234,6 +255,9 @@ public class ClienteServiceImplTest {
 		
 		//Retornar cliente
 		when(clienteRepo.save(any(Cliente.class))).thenReturn(unCliente);
+
+		//TipoUsuario
+		when(tipoUsuarioRepo.findById(any(Integer.class))).thenReturn(tipoUsuario);
 		
 		RuntimeException excep = null;
 		try {
