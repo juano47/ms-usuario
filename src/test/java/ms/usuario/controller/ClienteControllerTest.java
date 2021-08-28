@@ -46,7 +46,7 @@ public class ClienteControllerTest {
 		unCliente.setMail("unCli@gmail.com");
 
 		Usuario unUsuario = new Usuario();
-		unUsuario.setUser("unCli@gmail.com");
+		unUsuario.setUsername("unCli@gmail.com");
 		unUsuario.setPassword("MiPassword");
 		TipoUsuario unTipoUsuario = new TipoUsuario();
 		unTipoUsuario.setId(1);
@@ -89,7 +89,7 @@ public class ClienteControllerTest {
 		String server = urlServer+":"+puerto+"/"+apiCliente;
 		System.out.println("SERVER "+server);
 
-		unCliente.getUser().setUser(null);
+		unCliente.getUser().setUsername(null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(unCliente);
 		ResponseEntity<String> respuesta = testRestTemplate.exchange(server, HttpMethod.POST,requestCliente , String.class);		

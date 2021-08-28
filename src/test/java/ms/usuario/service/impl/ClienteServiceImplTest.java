@@ -62,7 +62,7 @@ public class ClienteServiceImplTest {
 	
 	Usuario unUsuario = new Usuario();
 	unUsuario.setId(1);
-	unUsuario.setUser("miUsuario");
+	unUsuario.setUsername("miUsuario");
 	unUsuario.setPassword("MiPassword");
 	TipoUsuario unTipoUsuario = new TipoUsuario();
 	unTipoUsuario.setTipo("Cliente");

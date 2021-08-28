@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ms.usuario.dao.EmpleadoRepository;
 import ms.usuario.dao.TipoUsuarioRepository;
 import ms.usuario.domain.Empleado;
 import ms.usuario.domain.TipoUsuario;
+import ms.usuario.domain.Usuario;
 import ms.usuario.service.EmpleadoService;
 
 @Service
@@ -20,7 +22,9 @@ public class EmpleadoServiceImpl implements EmpleadoService{
 
 	@Autowired
 	TipoUsuarioRepository tipoUsuarioRepo;
-
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public Optional<Empleado> buscarPorId(Integer id) {
@@ -53,6 +57,8 @@ public class EmpleadoServiceImpl implements EmpleadoService{
 		Optional<TipoUsuario> tipoUsuario = this.tipoUsuarioRepo.findById(nuevo.getUser().getTipoUsuario().getId());
 
 		if(tipoUsuario.isPresent() && tipoUsuario.get().getTipo().equals("Empleado")){
+			Usuario usuario = nuevo.getUser();
+			usuario.setPassword(this.passwordEncoder.encode(usuario.getPassword()));
 			return this.empleadoRepo.save(nuevo);
 		}
 		else

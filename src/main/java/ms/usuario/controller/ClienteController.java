@@ -90,7 +90,7 @@ public class ClienteController {
 			}
 		}
 
-		if(cliente.getUser() == null || cliente.getUser().getUser() == null || 
+		if(cliente.getUser() == null || cliente.getUser().getUsername() == null || 
 				cliente.getUser().getPassword() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("El usuario asignado al cliente debe contener nombre de usuario y password");
@@ -126,7 +126,7 @@ public class ClienteController {
 	public ResponseEntity<?> actualizar(@RequestBody Cliente cliente,  @PathVariable Integer id){
 
 
-		if(cliente.getUser() == null || cliente.getUser().getUser() == null || 
+		if(cliente.getUser() == null || cliente.getUser().getUsername() == null || 
 				cliente.getUser().getPassword() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("El usuario asignado al cliente debe contener nombre de usuario y password");
