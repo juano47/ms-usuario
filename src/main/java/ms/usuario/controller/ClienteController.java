@@ -10,7 +10,9 @@ import ms.usuario.service.ClienteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -161,5 +163,10 @@ public class ClienteController {
 
 		} 
 		return ResponseEntity.ok("Cliente "+id+" borrado con éxito");
+	}
+	
+	@GetMapping(value="/getReport", produces = MediaType.APPLICATION_PDF_VALUE)
+	public byte[] getReportePDf() throws Exception {
+		return clienteService.getReportePdf();
 	}
 }

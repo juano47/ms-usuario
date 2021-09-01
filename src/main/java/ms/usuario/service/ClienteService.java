@@ -3,6 +3,8 @@ package ms.usuario.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpEntity;
+
 import ms.usuario.domain.Cliente;
 import ms.usuario.exceptions.RiesgoException;
 
@@ -23,5 +25,7 @@ public interface ClienteService {
 	void delete(Integer id);
 
 	Optional<Cliente> findByIdObra(Optional<Integer> idObra);
+
+	byte[] getReportePdf() throws Exception;
 
 }

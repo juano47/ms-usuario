@@ -78,6 +78,8 @@ public class EmpleadoServiceImpl implements EmpleadoService{
 
 				if(tipoUsuario.isPresent() && tipoUsuario.get().getTipo().equals("Empleado") ){
 					nuevo.setId(id);
+					Usuario usuario = nuevo.getUser();
+					usuario.setPassword(this.passwordEncoder.encode(usuario.getPassword()));
 					this.empleadoRepo.save(nuevo);
 				}
 				else
