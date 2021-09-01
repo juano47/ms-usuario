@@ -1,9 +1,12 @@
 package ms.usuario.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import ms.usuario.domain.Cliente;
+import ms.usuario.domain.Empleado;
 import ms.usuario.domain.Obra;
 import ms.usuario.service.ObraService;
 
@@ -13,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +29,7 @@ public class ObraController {
 	@Autowired
 	ObraService obraService;
 
+	@HystrixCommand(fallbackMethod = "obraVacia")
 	@GetMapping(path = "/{id}")
 	@ApiOperation(value = "Busca un obra por id")
 	public ResponseEntity<Obra> obraPorId(@PathVariable Integer id){
@@ -32,6 +37,7 @@ public class ObraController {
 		return ResponseEntity.of(obra);
 	}
 
+	@HystrixCommand(fallbackMethod = "listaVacia")
 	@GetMapping(params = { "idCliente", "tipoObra" })
 	@ApiOperation(value = "Busca obras por cliente y/o tipo de obra")
 	public ResponseEntity<List<Obra>> getObras(@RequestParam(required = false) Integer idCliente,
@@ -40,6 +46,7 @@ public class ObraController {
 		return ResponseEntity.ok(obras);
 	}
 
+	@HystrixCommand(fallbackMethod = "listaVacia")
 	@GetMapping
 	@ApiOperation(value = "Retorna lista de obras")
 	public ResponseEntity<List<Obra>> todas(){
@@ -47,6 +54,7 @@ public class ObraController {
 		return ResponseEntity.ok(allObras);
 	}
 
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@PostMapping
 	@ApiOperation(value = "Da de alta una nueva obra")
 	public ResponseEntity<?> crear(@RequestBody Obra nuevo){
@@ -74,7 +82,7 @@ public class ObraController {
 		return ResponseEntity.ok("Obra creada");
 
 	}
-
+	@HystrixCommand(fallbackMethod = "obraVacia")
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Actualiza una obra")
 	@ApiResponses(value = {
@@ -102,6 +110,7 @@ public class ObraController {
 		return ResponseEntity.ok(nuevo);
 	}
 
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Elimina una obra")
 	@ApiResponses(value = {
@@ -120,5 +129,17 @@ public class ObraController {
 
 		} 
 		return ResponseEntity.ok("Obra "+id+" borrada con éxito");
+	}
+
+	public ResponseEntity<Obra> obraVacia(){
+		return ResponseEntity.ok(new Obra());
+	}
+
+	public ResponseEntity<List<Cliente>> listaVacia(){
+		return ResponseEntity.ok(new ArrayList<>());
+	}
+
+	public ResponseEntity<String> errorServidor(){
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Microservicio no disponible- Intentelo más tarde");
 	}
 }

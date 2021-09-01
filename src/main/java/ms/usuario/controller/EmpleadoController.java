@@ -1,9 +1,11 @@
 package ms.usuario.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import ms.usuario.domain.Cliente;
 import ms.usuario.domain.Empleado;
 import ms.usuario.service.EmpleadoService;
 
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +28,7 @@ public class EmpleadoController {
 	@Autowired
 	EmpleadoService empleadoService;
 
+	@HystrixCommand(fallbackMethod = "empleadoVacio")
 	@GetMapping(path = "/{id}")
 	@ApiOperation(value = "Busca un empleado por id")
 	public ResponseEntity<Empleado> empleadoPorId(@PathVariable Integer id){
@@ -32,7 +36,7 @@ public class EmpleadoController {
 		return ResponseEntity.of(empleado);
 	}
 
-
+	@HystrixCommand(fallbackMethod = "empleadoVacio")
 	@GetMapping(params = "nombre")
 	@ApiOperation(value = "Busca un empleado por nombre")
 	public ResponseEntity<Empleado> empleadoPorNombre(@RequestParam Optional<String> nombre){
@@ -41,7 +45,7 @@ public class EmpleadoController {
 		return ResponseEntity.of(empleado);
 	}
 	
-
+	@HystrixCommand(fallbackMethod = "listaVacia")
 	@GetMapping
 	@ApiOperation(value = "Retorna lista de empleados")
 	public ResponseEntity<List<Empleado>> todos(){
@@ -49,6 +53,7 @@ public class EmpleadoController {
 		return ResponseEntity.ok(allEmpleados);
 	}
 
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@PostMapping
 	@ApiOperation(value = "Da de alta un nuevo empleado")
 	public ResponseEntity<String> crear(@RequestBody Empleado empleado) {
@@ -78,6 +83,7 @@ public class EmpleadoController {
 		return ResponseEntity.ok("Empleado Creado");
 	}
 
+	@HystrixCommand(fallbackMethod = "empleadoVacio")
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Actualiza un empleado")
 	@ApiResponses(value = {
@@ -113,7 +119,8 @@ public class EmpleadoController {
 		} 
 		return ResponseEntity.ok(empleado);
 	}
-	
+
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Elimina un empleado")
 	@ApiResponses(value = {
@@ -132,5 +139,17 @@ public class EmpleadoController {
 
 		} 
 		return ResponseEntity.ok("Empleado "+id+" borrado con éxito");
+	}
+
+	public ResponseEntity<Empleado> empleadoVacio(){
+		return ResponseEntity.ok(new Empleado());
+	}
+
+	public ResponseEntity<List<Cliente>> listaVacia(){
+		return ResponseEntity.ok(new ArrayList<>());
+	}
+
+	public ResponseEntity<String> errorServidor(){
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Microservicio no disponible- Intentelo más tarde");
 	}
 }

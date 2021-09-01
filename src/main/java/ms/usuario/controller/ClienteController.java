@@ -1,5 +1,6 @@
 package ms.usuario.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -10,16 +11,13 @@ import ms.usuario.service.ClienteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin("*")
@@ -31,6 +29,7 @@ public class ClienteController {
 	@Autowired
 	ClienteService clienteService;
 
+	@HystrixCommand(fallbackMethod = "clienteVacio")
 	@GetMapping(path = "/{id}")
 	@ApiOperation(value = "Busca un cliente por id")
 	public ResponseEntity<Cliente> clientePorId(@PathVariable Integer id){
@@ -38,6 +37,7 @@ public class ClienteController {
 		return ResponseEntity.of(cliente);
 	}
 
+	@HystrixCommand(fallbackMethod = "clienteVacio")
 	@GetMapping(params = "cuit")
 	@ApiOperation(value = "Busca un cliente por cuit")
 	public ResponseEntity<Cliente> clientePorCuit(@RequestParam Optional<String> cuit){
@@ -46,6 +46,7 @@ public class ClienteController {
 		return ResponseEntity.of(cliente);
 	}
 
+	@HystrixCommand(fallbackMethod = "clienteVacio")
 	@GetMapping(params = "razonSocial")
 	@ApiOperation(value = "Busca un cliente por razón social")
 	public ResponseEntity<Cliente> clientePorRazonSocial(@RequestParam Optional<String> razonSocial){
@@ -54,6 +55,7 @@ public class ClienteController {
 		return ResponseEntity.of(cliente);
 	}
 
+	@HystrixCommand(fallbackMethod = "clienteVacio")
 	@GetMapping(params = "idObra")
 	@ApiOperation(value = "Busca un cliente por idObra")
 	public ResponseEntity<Cliente> clientePorIdObra(@RequestParam Optional<Integer> idObra){
@@ -62,6 +64,7 @@ public class ClienteController {
 		return ResponseEntity.of(cliente);
 	}
 
+	@HystrixCommand(fallbackMethod = "listaVacia")
 	@GetMapping
 	@ApiOperation(value = "Retorna lista de clientes")
 	public ResponseEntity<List<Cliente>> todos(){
@@ -69,6 +72,7 @@ public class ClienteController {
 		return ResponseEntity.ok(allClientes);
 	}
 
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@PostMapping
 	@ApiOperation(value = "Da de alta un nuevo cliente")
 	public ResponseEntity<String> crear(@RequestBody Cliente cliente) {
@@ -109,6 +113,7 @@ public class ClienteController {
 		return ResponseEntity.ok("Cliente Creado");
 	}
 
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Actualiza un cliente")
 	@ApiResponses(value = {
@@ -145,6 +150,7 @@ public class ClienteController {
 		return ResponseEntity.ok(cliente);
 	}
 
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Elimina un cliente")
 	@ApiResponses(value = {
@@ -164,9 +170,27 @@ public class ClienteController {
 		} 
 		return ResponseEntity.ok("Cliente "+id+" borrado con éxito");
 	}
+
 	
 	@GetMapping(value="/getReport", produces = MediaType.APPLICATION_PDF_VALUE)
 	public byte[] getReportePDf() throws Exception {
 		return clienteService.getReportePdf();
+	}
+
+	@GetMapping("/prueba")
+	String prueba(){
+		return "FUNCIONA TODO";
+	}
+
+	public ResponseEntity<Cliente> clienteVacio(){
+		return ResponseEntity.ok(new Cliente());
+	}
+
+	public ResponseEntity<List<Cliente>> listaVacia(){
+		return ResponseEntity.ok(new ArrayList<>());
+	}
+
+	public ResponseEntity<String> errorServidor(){
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Microservicio no disponible- Intentelo más tarde");
 	}
 }
